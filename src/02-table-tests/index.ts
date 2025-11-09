@@ -6,7 +6,7 @@ export enum Action {
   Exponentiate = '^',
 }
 
-type RawCalculatorInput = {
+export type RawCalculatorInput = {
   a: unknown;
   b: unknown;
   action: unknown;
@@ -46,6 +46,10 @@ export const simpleCalculator = (
 const isInputValid = (
   input: RawCalculatorInput,
 ): input is ValidCalculatorInput => {
+  if (!input || input === null || input === undefined) {
+    return false;
+  }
+
   const { a, b, action } = input;
 
   const actionValid = Object.values(Action).includes(action as Action);
