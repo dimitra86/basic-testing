@@ -1,15 +1,29 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { throttle } from 'lodash';
 
 export const THROTTLE_TIME = 5000;
 
-const getDataFromApi = async (relativePath: string) => {
-  const axiosClient = axios.create({
-    baseURL: 'https://jsonplaceholder.typicode.com',
-  });
+let axiosClient: AxiosInstance | null = null;
+export const __setAxiosClientForTest = (client: AxiosInstance) => {
+  axiosClient = client;
+};
 
-  const response = await axiosClient.get(relativePath);
+const getClient = (): AxiosInstance => {
+  if (!axiosClient) {
+    axiosClient = axios.create({
+      baseURL: 'https://jsonplaceholder.typicode.com',
+    });
+  }
+  return axiosClient;
+};
+
+const getDataFromApi = async (relativePath: string) => {
+  const client = getClient();
+  const response = await client.get(relativePath);
   return response.data;
 };
 
-export const throttledGetDataFromApi = throttle(getDataFromApi, THROTTLE_TIME);
+export const throttledGetDataFromApi = throttle(getDataFromApi, THROTTLE_TIME, {
+  leading: true,
+  trailing: true,
+});
