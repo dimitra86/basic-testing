@@ -45,12 +45,11 @@ export class BankAccount {
     return requestFailed ? null : balance;
   }
 
-  public async synchronizeBalance() {
+  public async synchronizeBalance(): Promise<void> {
     const balance = await this.fetchBalance();
     if (balance === null) {
       throw new SynchronizationFailedError();
     }
-
     this._balance = balance;
   }
 }
